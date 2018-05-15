@@ -48,6 +48,7 @@ class CouchQueryServer
         $this->io->on('data', function ($line) {
             try {
                 $line = rtrim($line, "\r\n");
+                $this->log('input', $line);
                 $command = json_decode($line, true);
                 $this->state_handler->setLineLength(strlen($line));
                 $command_key = array_shift($command);
@@ -82,7 +83,10 @@ class CouchQueryServer
 
     public function response($content)
     {
-        $this->io->write(Couch::toJSON($content) . PHP_EOL);
+        $content = Couch::toJSON($content) . PHP_EOL;
+        $this->log('output', $content);
+
+        $this->io->write($content);
     }
 
     /** @var CouchQueryServer */
@@ -105,5 +109,10 @@ class CouchQueryServer
     public function getViewHandler()
     {
         return $this->view_handler;
+    }
+
+    private function log($method, $content)
+    {
+        file_put_contents('logs.txt', $method . ':' . $content, FILE_APPEND | LOCK_EX);
     }
 }
