@@ -83,7 +83,7 @@ class CouchQueryServer
 
     public function response($content)
     {
-        $content = Couch::toJSON($content) . PHP_EOL;
+        $content = Couch::toJSON($content) . "\n";
         $this->log('output', $content);
 
         $this->io->write($content);
