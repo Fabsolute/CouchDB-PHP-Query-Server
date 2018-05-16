@@ -8,6 +8,8 @@ use Fabstract\CouchQueryServer\Handler\StateHandler;
 use Fabstract\CouchQueryServer\Handler\ViewHandler;
 use React\EventLoop\Factory as EventLoopFactory;
 use React\EventLoop\LoopInterface;
+use React\Stream\ReadableResourceStream;
+use React\Stream\WritableResourceStream;
 
 class CouchQueryServer
 {
@@ -40,7 +42,10 @@ class CouchQueryServer
         $this->dispatchers['reduce'] = [$this->view_handler, 'reduce'];
         $this->dispatchers['rereduce'] = [$this->view_handler, 'rereduce'];
         $this->loop = EventLoopFactory::create();
-        $this->io = new Stdio($this->loop);
+
+        $input = new ReadableResourceStream('php://stdin', $this->loop);
+        $output = new WritableResourceStream('php://stdout', $this->loop);
+        $this->io = new Stdio($this->loop, $input, $output);
     }
 
     public function run()
