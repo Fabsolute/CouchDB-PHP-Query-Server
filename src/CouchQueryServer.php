@@ -43,8 +43,8 @@ class CouchQueryServer
         $this->dispatchers['rereduce'] = [$this->view_handler, 'rereduce'];
         $this->loop = EventLoopFactory::create();
 
-        $input = new ReadableResourceStream('php://stdin', $this->loop);
-        $output = new WritableResourceStream('php://stdout', $this->loop);
+        $input = new ReadableResourceStream(fopen('php://stdin', 'r'), $this->loop);
+        $output = new WritableResourceStream(fopen('php://stdout', 'w'), $this->loop);
         $this->io = new Stdio($this->loop, $input, $output);
     }
 
